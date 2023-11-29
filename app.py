@@ -16,7 +16,7 @@ def process_image(image):
     #  YCrCb 컬러 스페이스 변환
     ycrcb_image = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
     # Y 채널 CLAHE 적용
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)) #이미지 퀄리티 향상 위한 CLAHE
     Y_channel, Cr, Cb = cv2.split(ycrcb_image)
     Y_channel = clahe.apply(Y_channel)
     # 변경된 Y 채널 다시 YCrCb 병합
@@ -34,7 +34,11 @@ def convert_image_to_grayscale(image):
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return grayscale_image
 
+def flip_image(image):
+    flipped_image = cv2.flip(image, 0)
+    rgb_flipped_image = cv2.cvtColor(flipped_image, cv2.COLOR_BGR2RGB)
 
+    return rgb_flipped_image
 
 
 def plot_histograms(original_image, processed_image):
@@ -76,7 +80,7 @@ if uploaded_file is not None:
     # 이미지 옵션 선택
     option = st.selectbox(
         '원하는 변환을 선택하세요:',
-        ('None', 'Histogram Equalization', '흑백변환')
+        ('None', 'Histogram Equalization', '흑백변환', '90도 회전')
     )
 
     # 이미지 표시
@@ -88,3 +92,7 @@ if uploaded_file is not None:
     elif option == '흑백변환':
         grayscale_image = convert_image_to_grayscale(image)
         st.image(grayscale_image, caption='Grayscale Image', use_column_width=True)
+
+    elif option =='90도 회전':
+        rgb_flipped_image = flip_image(image)
+        st.image(rgb_flipped_image, caption = 'Flipped Image', use_column_width = True)
